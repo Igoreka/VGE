@@ -12,32 +12,32 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0">
-            <Button Name="btnSelect" Height="40" Width="40" Margin="10 10 10 10">
+            <Button Name="btnSelect" ToolTip="Редактирование" Height="40" Width="40" Margin="10 10 10 10">
                 <DockPanel>
                     <Image Source=".\Rastr\arrow.png"/>
                 </DockPanel>
             </Button>
-            <Button Name="btnAddLine" Height="40" Width="40" Margin="10 10 10 10">
+            <Button Name="btnAddLine" ToolTip="Добавление новой ломанной линии" Height="40" Width="40" Margin="10 10 10 10">
                 <DockPanel>
                     <Image Source=".\Rastr\brokenline.png"/>
                 </DockPanel>
             </Button>
-            <Button Name="btnLineThickness" Height="40" Width="40" Margin="10 10 10 10">
+            <Button Name="btnLineThickness"  ToolTip="Изменить толщину" Height="40" Width="40" Margin="10 10 10 10">
                 <DockPanel>
                     <Image Source=".\Rastr\linethickness.png"/>
                 </DockPanel>
             </Button>
-            <Button Name="btnLineColor" Height="40" Width="40" Margin="10 10 10 10">
+            <Button Name="btnLineColor"  ToolTip="Изменить цвет" Height="40" Width="40" Margin="10 10 10 10">
                 <DockPanel>
                     <Image Source=".\Rastr\changecolor.png"/>
                 </DockPanel>
             </Button>
-            <Button Name="btnSaveToFile" Height="40" Width="40" Margin="10 10 10 10">
+            <Button Name="btnSaveToFile"  ToolTip="Сохранить в файл" Height="40" Width="40" Margin="10 10 10 10">
                 <DockPanel>
                     <Image Source=".\Rastr\savetofile.png"/>
                 </DockPanel>
             </Button>
-            <Button Name="btnLoadFromFile" Height="40" Width="40" Margin="10 10 10 10">
+            <Button Name="btnLoadFromFile"  ToolTip="Загрузить из файла" Height="40" Width="40" Margin="10 10 10 10">
                 <DockPanel>
                     <Image Source=".\Rastr\loadfromfile.png"/>
                 </DockPanel>
