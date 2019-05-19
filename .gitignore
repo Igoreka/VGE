@@ -3,3 +3,5 @@
 ################################################################################
 
 /VectorGraphicEditor/bin/Debug
+/VectorGraphicEditor/obj/Debug
+/VectorGraphicEditor/.vs/VectorGraphicEditor/v16
