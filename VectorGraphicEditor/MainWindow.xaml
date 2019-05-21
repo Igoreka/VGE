@@ -17,7 +17,7 @@
                     <Image Source=".\Rastr\arrow.png"/>
                 </DockPanel>
             </Button>
-            <Button Name="btnAddLine" ToolTip="Добавление новой ломанной линии" Height="40" Width="40" Margin="10 10 10 10">
+            <Button Name="btnAddLine" Click="btnAddLine_Click" ToolTip="Добавление новой ломанной линии" Height="40" Width="40" Margin="10 10 10 10">
                 <DockPanel>
                     <Image Source=".\Rastr\brokenline.png"/>
                 </DockPanel>
@@ -42,6 +42,12 @@
                     <Image Source=".\Rastr\loadfromfile.png"/>
                 </DockPanel>
             </Button>
+            <TextBox Name="txtMessage"/>
         </StackPanel>
+        <Viewbox Grid.Column="1">
+            <ScrollViewer>
+                <Canvas Name="DrawTable" MouseUp="DrawTable_MouseUp" Width="1000" Height="1000"/>
+            </ScrollViewer>
+        </Viewbox>
     </Grid>
 </Window>
