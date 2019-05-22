@@ -16,41 +16,7 @@ namespace VectorGraphicEditor
         public MainWindow()
         {
             InitializeComponent();
-            TestDrawPolyLine();
-            _isAddNewObject = false;
-            txtMessage.Text = DrawTable.Height.ToString() + ";" + DrawTable.Width.ToString();
-        }
-
-        private void TestDrawPolyLine()
-        {
-            PointCollection test = new PointCollection
-            {
-                new Point(10, 10),
-                new Point(10, 40),
-                new Point(20, 40),
-                new Point(20, 80),
-                new Point(60, 90),
-                new Point(60, 150),
-                new Point(100, 200)
-            };
-            _ = DrawTable.Children.Add(new Polyline
-            {
-                Stroke = Brushes.Blue,
-                Points = test
-            });
-            test = new PointCollection
-            {
-                new Point(0, 0),
-                new Point(0, 400),
-                new Point(400, 400),
-                new Point(0, 400),
-                new Point(0, 0)
-            };
-            _ = DrawTable.Children.Add(new Polyline
-            {
-                Stroke = Brushes.Green,
-                Points = test
-            });
+            _isAddNewObject = false;            
         }
 
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
@@ -60,24 +26,45 @@ namespace VectorGraphicEditor
             {
                 Stroke = Brushes.Red
             };
-            DrawTable.Children.Add(_currentPolyline);
+            drawTable.Children.Add(_currentPolyline);
         }
 
-        private void DrawTable_MouseUp(object sender, MouseButtonEventArgs e)
+        private void drawTable_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Right)
             {
                 _isAddNewObject = false;
             }
+        }
+
+        private void drawTable_MouseDown(object sender, MouseButtonEventArgs e)
+        {
             if (e.ChangedButton == MouseButton.Left)
             {
                 if (_isAddNewObject)
                 {
-                    _currentPoint = new Point(e.GetPosition(DrawTable).X, e.GetPosition(DrawTable).Y);
+                    _currentPoint = new Point(e.GetPosition(drawTable).X, e.GetPosition(drawTable).Y);
                     _currentPolyline.Points.Add(_currentPoint);
+                    if (_currentPolyline.Points.Count == 1)
+                    {
+                        _currentPoint = new Point(e.GetPosition(drawTable).X, e.GetPosition(drawTable).Y);
+                        _currentPolyline.Points.Add(_currentPoint);
+                    }
                 }
             }
         }
 
+        private void drawTable_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isAddNewObject && _currentPoint != null && _currentPolyline != null && _currentPolyline.Points.Count > 1)
+            {
+                _currentPolyline.Points.Remove(_currentPoint);
+                _currentPoint.X = e.GetPosition(drawTable).X;
+                _currentPoint.Y = e.GetPosition(drawTable).Y;
+                _currentPolyline.Points.Add(_currentPoint);
+                txtMessage.Text = "("+_currentPoint.X.ToString() + ";" + _currentPoint.Y.ToString() + ")";
+                drawTable.InvalidateVisual();
+            }
+        }
     }
 }
