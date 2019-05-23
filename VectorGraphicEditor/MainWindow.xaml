@@ -12,7 +12,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0">
-            <Button Name="btnSelect" ToolTip="Редактирование" Height="40" Width="40" Margin="10 10 10 10">
+            <Button Name="btnSelect" ToolTip="Редактирование" Height="40" Width="40" Margin="10 10 10 10" Click="BtnSelect_Click">
                 <DockPanel>
                     <Image Source=".\Rastr\arrow.png"/>
                 </DockPanel>
@@ -44,6 +44,6 @@
             </Button>
             <TextBox Name="txtMessage"/>
         </StackPanel>
-        <Canvas Grid.Column="1" Background="Transparent" Name="drawTable" MouseUp="drawTable_MouseUp" Height="570" Width="930" MouseDown="drawTable_MouseDown" MouseMove="drawTable_MouseMove"/>
+        <Canvas Grid.Column="1" Background="Transparent" Name="drawTable" Height="570" Width="930" MouseDown="drawTable_MouseDown" MouseMove="drawTable_MouseMove"/>
     </Grid>
 </Window>
