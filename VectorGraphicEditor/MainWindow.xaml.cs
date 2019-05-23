@@ -27,10 +27,11 @@ namespace VectorGraphicEditor
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
             _isAddNewObject = true;
-            addNewLin();
+            ClearMarkers();
+            AddNewLine();
         }
 
-        private void addNewLin()
+        private void AddNewLine()
         {
             _currentPolyline = new Polyline
             {
@@ -61,7 +62,7 @@ namespace VectorGraphicEditor
             }
             if (e.ChangedButton == MouseButton.Right)
             {
-                addNewLin();
+                AddNewLine();
             }
         }
 
@@ -90,14 +91,9 @@ namespace VectorGraphicEditor
                 return;
             }
 
-            if (_currentPolyline != (Polyline)sender && _addedMarkerIndexes.Count!= 0)
+            if (_currentPolyline != (Polyline)sender)
             {
-                _addedMarkerIndexes.Reverse();
-                foreach (int idx in _addedMarkerIndexes)
-                {
-                    drawTable.Children.RemoveAt(idx);
-                }
-                _addedMarkerIndexes.Clear();
+                ClearMarkers();
             }
             _currentPolyline = (Polyline)sender;
             foreach(Point pnt in _currentPolyline.Points)
@@ -113,6 +109,17 @@ namespace VectorGraphicEditor
             }
         }
 
-
+        private void ClearMarkers()
+        {
+            if(_addedMarkerIndexes.Count != 0)
+            {
+                _addedMarkerIndexes.Reverse();
+                foreach (int idx in _addedMarkerIndexes)
+                {
+                    drawTable.Children.RemoveAt(idx);
+                }
+                _addedMarkerIndexes.Clear();
+            }
+        }
     }
 }
