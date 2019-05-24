@@ -4,6 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using VectorGraphicEditor.Model;
+using VectorGraphicEditor.ViewModel;
 
 namespace VectorGraphicEditor
 {
@@ -15,18 +17,21 @@ namespace VectorGraphicEditor
         private Polyline _currentPolyline;
         private Rectangle _marker;
         private Point _currentPoint;
-        private bool _isAddNewObject;
         private int? _pointIndex;
         private List<int> _addedMarkerIndexes = new List<int>();
+
+        private DrawViewModel _viewModel;
+
         public MainWindow()
         {
             InitializeComponent();
-            _isAddNewObject = false;
+            _viewModel = new DrawViewModel();
+            this.DataContext = _viewModel;
         }
 
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
-            _isAddNewObject = true;
+            _viewModel.DrawMode = DrawMode.AddNewFigure;
             ClearMarkers();
             AddNewLine();
         }
@@ -35,7 +40,8 @@ namespace VectorGraphicEditor
         {
             _currentPolyline = new Polyline
             {
-                Stroke = Brushes.Red
+                Stroke = Brushes.Red,
+                StrokeThickness = (double)_viewModel.CurrentThikness
             };
             _currentPolyline.MouseDown += Polyline_MouseDown;
             _pointIndex = null;
@@ -46,7 +52,7 @@ namespace VectorGraphicEditor
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                if (_isAddNewObject)
+                if (_viewModel.DrawMode == DrawMode.AddNewFigure)
                 {
                     _currentPoint = new Point(e.GetPosition(drawTable).X, e.GetPosition(drawTable).Y);
                     _currentPolyline.Points.Add(_currentPoint);
@@ -68,25 +74,24 @@ namespace VectorGraphicEditor
 
         private void drawTable_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isAddNewObject && _currentPoint != null && _currentPolyline != null && _currentPolyline.Points.Count > 1)
+            if (_viewModel.DrawMode == DrawMode.AddNewFigure && _currentPoint != null && _currentPolyline != null && _currentPolyline.Points.Count > 1)
             {
                 _currentPolyline.Points.RemoveAt(_pointIndex.Value);
                 _currentPoint.X = e.GetPosition(drawTable).X;
                 _currentPoint.Y = e.GetPosition(drawTable).Y;
                 _currentPolyline.Points.Insert(_pointIndex.Value, _currentPoint);
-                txtMessage.Text = "(" + _currentPoint.X.ToString() + ";" + _currentPoint.Y.ToString() + ")";
                 drawTable.InvalidateVisual();
             }
         }
 
         private void BtnSelect_Click(object sender, RoutedEventArgs e)
         {
-            _isAddNewObject = false;
+            _viewModel.DrawMode = DrawMode.EditFigure;
         }
 
         private void Polyline_MouseDown(object sender, MouseEventArgs e)
         {
-            if (_isAddNewObject)
+            if (_viewModel.DrawMode == DrawMode.AddNewFigure)
             {
                 return;
             }
