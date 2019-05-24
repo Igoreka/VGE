@@ -20,17 +20,17 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0">
-            <Button x:Name="btnSelect" ToolTip="Редактирование" Height="40" Width="40" Margin="10 10 10 10" Click="BtnSelect_Click">
-                <DockPanel>
+            <Button Background="{Binding ButtonColorEdit}" x:Name="btnSelect" ToolTip="Редактирование" Height="50" Width="50" Margin="5 5 5 5" Click="BtnSelect_Click">
+                <DockPanel Width="35" Height="35" >
                     <Image Source=".\Rastr\arrow.png"/>
                 </DockPanel>
             </Button>
-            <Button x:Name="btnAddLine" Click="btnAddLine_Click" ToolTip="Добавление новой ломанной линии" Height="40" Width="40" Margin="10 10 10 10">
-                <DockPanel>
+            <Button Background="{Binding ButtonColorAdd}" x:Name="btnAddLine" Click="btnAddLine_Click" ToolTip="Добавление новой ломанной линии" Height="50" Width="50" Margin="5 5 5 5">
+                <DockPanel Width="35" Height="35" >
                     <Image Source=".\Rastr\brokenline.png"/>
                 </DockPanel>
             </Button>
-            <ComboBox ItemsSource="{Binding Path=LineThiknees, Mode=OneWay}"
+            <ComboBox Margin="10,5" ItemsSource="{Binding Path=LineThiknees, Mode=OneWay}"
                       DisplayMemberPath="Value"
                       SelectedValuePath="Key"
                       SelectedValue="{Binding Path=CurrentThikness, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, Mode=TwoWay}"                      

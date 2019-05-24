@@ -15,6 +15,10 @@ namespace VectorGraphicEditor.ViewModel
         private BrokenLine _currentBrokenLine;
         private Vertex _currentVertex;
         private DrawMode _drawMode;
+        private bool _addNewLineIsChecked;
+        private bool _editLineIsChecked;
+        private SolidColorBrush _buttonColorAdd = Brushes.DarkGray;
+        private SolidColorBrush _buttonColorEdit = Brushes.DarkGray;
 
         public Dictionary<Thikness, string> LineThiknees { get; set; }
 
@@ -27,9 +31,59 @@ namespace VectorGraphicEditor.ViewModel
             }
         }
 
+        public SolidColorBrush ButtonColorAdd => _buttonColorAdd;
+
+        public SolidColorBrush ButtonColorEdit => _buttonColorEdit;
+        public bool AddNewLineIsChecked
+        {
+            get { return _addNewLineIsChecked; }
+            set
+            {
+                _addNewLineIsChecked = value;
+                NotifyPropertyChanged(nameof(AddNewLineIsChecked));
+                if (_addNewLineIsChecked)
+                {
+                    EditLineIsChecked = !_addNewLineIsChecked;
+                    _drawMode = DrawMode.AddNewFigure;
+                     _buttonColorAdd = Brushes.Green;
+                    NotifyPropertyChanged(nameof(ButtonColorAdd));
+                }
+                else
+                {
+                    _drawMode = DrawMode.None;
+                    _buttonColorAdd = Brushes.DarkGray;
+                    NotifyPropertyChanged(nameof(ButtonColorAdd));
+                }
+            }
+        }
+        public bool EditLineIsChecked
+        {
+            get { return _editLineIsChecked; }
+            set
+            {
+                _editLineIsChecked = value;
+                NotifyPropertyChanged(nameof(AddNewLineIsChecked));
+                if (_editLineIsChecked)
+                {
+                    AddNewLineIsChecked = !_editLineIsChecked;
+                    _drawMode = DrawMode.EditFigure;
+                    _buttonColorEdit = Brushes.Green;
+                    NotifyPropertyChanged(nameof(ButtonColorEdit));
+                }
+                else
+                {
+                    _drawMode = DrawMode.None;
+                    _buttonColorEdit = Brushes.DarkGray;
+                    NotifyPropertyChanged(nameof(ButtonColorEdit));
+                }
+            }
+        }
+
         public DrawViewModel()
         {
             InitCollections();
+            _addNewLineIsChecked = false;
+            _editLineIsChecked = false;
             _drawMode = DrawMode.None;
             _currentThikness = Thikness.Thin;
         }

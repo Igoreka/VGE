@@ -31,7 +31,7 @@ namespace VectorGraphicEditor
 
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.DrawMode = DrawMode.AddNewFigure;
+            _viewModel.AddNewLineIsChecked = true;
             ClearMarkers();
             AddNewLine();
         }
@@ -68,7 +68,7 @@ namespace VectorGraphicEditor
             }
             if (e.ChangedButton == MouseButton.Right)
             {
-                AddNewLine();
+                _viewModel.AddNewLineIsChecked = false;
             }
         }
 
@@ -86,7 +86,7 @@ namespace VectorGraphicEditor
 
         private void BtnSelect_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.DrawMode = DrawMode.EditFigure;
+            _viewModel.EditLineIsChecked = true;
         }
 
         private void Polyline_MouseDown(object sender, MouseEventArgs e)
