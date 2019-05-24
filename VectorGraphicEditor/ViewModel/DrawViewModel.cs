@@ -19,7 +19,29 @@ namespace VectorGraphicEditor.ViewModel
         private bool _editLineIsChecked;
         private SolidColorBrush _buttonColorAdd = Brushes.DarkGray;
         private SolidColorBrush _buttonColorEdit = Brushes.DarkGray;
+        private Color _currentPickColor;
+        
+        #region Цвет
+        public Color CurrentPickColor
+        {
+            get
+            {
+                return _currentPickColor;
+            }
+            set
+            {
+                _currentPickColor = value;
+                _currentColor = new SolidColorBrush(_currentPickColor);
+                NotifyPropertyChanged(nameof(CurrentPickColor));
+                NotifyPropertyChanged(nameof(CurrentColor));
+            }
+        }
 
+        public SolidColorBrush CurrentColor
+        {
+            get { return _currentColor; }
+        }
+        #endregion
         public Dictionary<Thikness, string> LineThiknees { get; set; }
 
         public void InitCollections()

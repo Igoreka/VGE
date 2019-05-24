@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:VGEModel="clr-namespace:VectorGraphicEditor.Model"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:VectorGraphicEditor"
         xmlns:ViewModel="clr-namespace:VectorGraphicEditor.ViewModel" x:Class="VectorGraphicEditor.MainWindow"
         mc:Ignorable="d"
@@ -41,6 +42,7 @@
                     <Image Source=".\Rastr\changecolor.png"/>
                 </DockPanel>
             </Button>
+            <xctk:ColorPicker x:Name="_colorPicker" SelectedColor="{Binding CurrentPickColor, Mode=TwoWay}" VerticalAlignment="Top" Margin="10 10 10 10"/>
             <Button x:Name="btnSaveToFile"  ToolTip="Сохранить в файл" Height="40" Width="40" Margin="10 10 10 10">
                 <DockPanel>
                     <Image Source=".\Rastr\savetofile.png"/>

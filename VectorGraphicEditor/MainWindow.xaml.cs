@@ -40,7 +40,7 @@ namespace VectorGraphicEditor
         {
             _currentPolyline = new Polyline
             {
-                Stroke = Brushes.Red,
+                Stroke = _viewModel.CurrentColor,
                 StrokeThickness = (double)_viewModel.CurrentThikness
             };
             _currentPolyline.MouseDown += Polyline_MouseDown;
