@@ -6,3 +6,5 @@
 /VectorGraphicEditor/obj/Debug
 /VectorGraphicEditor/.vs/VectorGraphicEditor/v16
 /VectorGraphicEditor/packages/Extended.Wpf.Toolkit.3.5.0
+/VectorGraphicEditor/obj/Release
+/VectorGraphicEditor/bin/Release
