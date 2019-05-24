@@ -68,18 +68,33 @@ namespace VectorGraphicEditor
             }
             if (e.ChangedButton == MouseButton.Right)
             {
-                _viewModel.AddNewLineIsChecked = false;
+                if (_viewModel.DrawMode == DrawMode.AddNewFigure)
+                {
+                    _viewModel.AddNewLineIsChecked = false;
+                }
+                if (_viewModel.DrawMode == DrawMode.MoveVertex)
+                {
+                    _viewModel.DrawMode = DrawMode.EditFigure;
+                }
             }
         }
 
         private void drawTable_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_viewModel.DrawMode == DrawMode.AddNewFigure && _currentPoint != null && _currentPolyline != null && _currentPolyline.Points.Count > 1)
+            if ((_viewModel.DrawMode == DrawMode.AddNewFigure || _viewModel.DrawMode == DrawMode.MoveVertex)
+                && _currentPoint != null 
+                && _currentPolyline != null 
+                && _currentPolyline.Points.Count > 1)
             {
                 _currentPolyline.Points.RemoveAt(_pointIndex.Value);
                 _currentPoint.X = e.GetPosition(drawTable).X;
                 _currentPoint.Y = e.GetPosition(drawTable).Y;
                 _currentPolyline.Points.Insert(_pointIndex.Value, _currentPoint);
+                if (_marker != null)
+                {
+                    Canvas.SetLeft(_marker, _currentPoint.X - 5);
+                    Canvas.SetTop(_marker, _currentPoint.Y - 5);
+                }
                 drawTable.InvalidateVisual();
             }
         }
@@ -101,22 +116,61 @@ namespace VectorGraphicEditor
                 ClearMarkers();
             }
             _currentPolyline = (Polyline)sender;
-            foreach(Point pnt in _currentPolyline.Points)
+            DrawMarkres(_currentPolyline);
+        }
+
+        private void DrawMarkres(Polyline polyline)
+        {
+            foreach (Point pnt in polyline.Points)
             {
                 _marker = new Rectangle();
                 _marker.Stroke = Brushes.Green;
                 _marker.Fill = Brushes.Transparent;
                 _marker.Width = 10;
                 _marker.Height = 10;
+                _marker.MouseDown += Marker_MouseDown;
                 Canvas.SetLeft(_marker, pnt.X - 5);
                 Canvas.SetTop(_marker, pnt.Y - 5);
                 _addedMarkerIndexes.Add(drawTable.Children.Add(_marker));
+            }
+            _marker = null;
+        }
+
+        private void Marker_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (_viewModel.DrawMode != DrawMode.MoveVertex)
+            {
+                _viewModel.DrawMode = DrawMode.MoveVertex;
+            }
+
+            if (_marker != null)
+            {
+                _marker.Fill = Brushes.Transparent;
+            }
+            _marker = (Rectangle)sender;
+
+            _marker.Fill = Brushes.Green;
+            FindVertexIndex();
+        }
+
+        private void FindVertexIndex()
+        {
+            _pointIndex = 0;
+            _currentPoint.X = Canvas.GetLeft(_marker) + 5;
+            _currentPoint.Y = Canvas.GetTop(_marker) + 5;
+            foreach (Point pt in _currentPolyline.Points)
+            {
+                if (pt.X == _currentPoint.X && pt.Y == _currentPoint.Y)
+                {
+                    return;
+                }
+                _pointIndex++;
             }
         }
 
         private void ClearMarkers()
         {
-            if(_addedMarkerIndexes.Count != 0)
+            if (_addedMarkerIndexes.Count != 0)
             {
                 _addedMarkerIndexes.Reverse();
                 foreach (int idx in _addedMarkerIndexes)

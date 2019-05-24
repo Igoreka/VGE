@@ -37,12 +37,7 @@
                       SelectedValue="{Binding Path=CurrentThikness, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, Mode=TwoWay}"                      
                       IsSynchronizedWithCurrentItem="True">
             </ComboBox>
-            <Button x:Name="btnLineColor"  ToolTip="Изменить цвет" Height="40" Width="40" Margin="10 10 10 10">
-                <DockPanel>
-                    <Image Source=".\Rastr\changecolor.png"/>
-                </DockPanel>
-            </Button>
-            <xctk:ColorPicker x:Name="_colorPicker" SelectedColor="{Binding CurrentPickColor, Mode=TwoWay}" VerticalAlignment="Top" Margin="10 10 10 10"/>
+            <xctk:ColorPicker ToolTip="Изменить цвет" x:Name="_colorPicker" SelectedColor="{Binding CurrentPickColor, Mode=TwoWay}" VerticalAlignment="Top" Margin="10 10 10 10"/>
             <Button x:Name="btnSaveToFile"  ToolTip="Сохранить в файл" Height="40" Width="40" Margin="10 10 10 10">
                 <DockPanel>
                     <Image Source=".\Rastr\savetofile.png"/>
