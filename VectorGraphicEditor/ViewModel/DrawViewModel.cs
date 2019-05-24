@@ -42,6 +42,8 @@ namespace VectorGraphicEditor.ViewModel
             get { return _currentColor; }
         }
         #endregion
+
+        #region Толщина линии
         public Dictionary<Thikness, string> LineThiknees { get; set; }
 
         public void InitCollections()
@@ -52,6 +54,7 @@ namespace VectorGraphicEditor.ViewModel
                 LineThiknees.Add(val,EnumConverter.GetDescription(val));
             }
         }
+        #endregion
 
         public SolidColorBrush ButtonColorAdd => _buttonColorAdd;
 
