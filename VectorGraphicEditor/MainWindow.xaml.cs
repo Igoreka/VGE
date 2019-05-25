@@ -14,8 +14,8 @@ namespace VectorGraphicEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Polyline _currentPolyline;
         private Rectangle _marker;
+        private Polyline _currentPolyline;
         private Point _currentPoint;
         private int? _pointIndex;
         private List<int> _addedMarkerIndexes = new List<int>();
@@ -79,6 +79,42 @@ namespace VectorGraphicEditor
             }
         }
 
+        private void btnDelVertex_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.DrawMode != DrawMode.EditFigure)
+            {
+                return;
+            }
+            if (_pointIndex == null || _marker == null || _currentPolyline == null)
+            {
+                return;
+            }
+            _currentPolyline.Points.RemoveAt(_pointIndex.Value);
+            _marker.Height = 0;
+            _marker.Width = 0;
+            _pointIndex = null;
+            _marker = null;
+            drawTable.InvalidateVisual();
+        }
+
+        private void btnDelLine_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.DrawMode != DrawMode.EditFigure)
+            {
+                return;
+            }
+            if (_currentPolyline == null)
+            {
+                return;
+            }
+            ClearMarkers();
+            drawTable.Children.Remove(_currentPolyline);
+            _currentPolyline = null;
+            _pointIndex = null;      
+            _marker = null;
+            drawTable.InvalidateVisual();
+        }
+        
         private void drawTable_MouseMove(object sender, MouseEventArgs e)
         {
             if ((_viewModel.DrawMode == DrawMode.AddNewFigure || _viewModel.DrawMode == DrawMode.MoveVertex)

@@ -31,6 +31,16 @@
                     <Image Source=".\Rastr\brokenline.png"/>
                 </DockPanel>
             </Button>
+            <Button x:Name="btnDelLine" Click="btnDelLine_Click" ToolTip="Удаление ломанной линии" Height="50" Width="50" Margin="5 5 5 5">
+                <DockPanel Width="35" Height="35" >
+                    <Image Source=".\Rastr\brokenlinedelete.png"/>
+                </DockPanel>
+            </Button>
+            <Button x:Name="btnDelVertex" Click="btnDelVertex_Click" ToolTip="Удаление вершины" Height="50" Width="50" Margin="5 5 5 5">
+                <DockPanel Width="35" Height="35" >
+                    <Image Source=".\Rastr\vertexdelete.png"/>
+                </DockPanel>
+            </Button>
             <ComboBox Margin="10,5" ItemsSource="{Binding Path=LineThiknees, Mode=OneWay}"
                       DisplayMemberPath="Value"
                       SelectedValuePath="Key"

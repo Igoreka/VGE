@@ -89,9 +89,7 @@
   <ItemGroup>
     <Compile Include="Model\DrawMode.cs" />
     <Compile Include="Model\Thikness.cs" />
-    <Compile Include="ViewModel\BrokenLine.cs" />
     <Compile Include="ViewModel\DrawViewModel.cs" />
-    <Compile Include="ViewModel\Vertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -145,6 +143,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Rastr\brokenlinedelete.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Rastr\vertexdelete.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

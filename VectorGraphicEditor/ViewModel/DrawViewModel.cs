@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using VectorGraphicEditor.Model;
 
 
@@ -12,8 +13,6 @@ namespace VectorGraphicEditor.ViewModel
     {
         private Thikness _currentThikness;
         private SolidColorBrush _currentColor;
-        private BrokenLine _currentBrokenLine;
-        private Vertex _currentVertex;
         private DrawMode _drawMode;
         private bool _addNewLineIsChecked;
         private bool _editLineIsChecked;
@@ -59,6 +58,7 @@ namespace VectorGraphicEditor.ViewModel
         public SolidColorBrush ButtonColorAdd => _buttonColorAdd;
 
         public SolidColorBrush ButtonColorEdit => _buttonColorEdit;
+
         public bool AddNewLineIsChecked
         {
             get { return _addNewLineIsChecked; }
@@ -111,12 +111,6 @@ namespace VectorGraphicEditor.ViewModel
             _editLineIsChecked = false;
             _drawMode = DrawMode.None;
             _currentThikness = Thikness.Thin;
-        }
-
-        public Vertex CurrentVertex
-        {
-            get { return _currentVertex; }
-            set { _currentVertex = value; NotifyPropertyChanged(nameof(CurrentVertex)); }
         }
 
         public DrawMode DrawMode
