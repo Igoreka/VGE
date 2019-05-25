@@ -17,6 +17,8 @@ namespace VectorGraphicEditor
         private Rectangle _marker;
         private Polyline _currentPolyline;
         private Point _currentPoint;
+        private Point _moveFromPoint;
+        private Point _moveToPoint;
         private int? _pointIndex;
         private List<int> _addedMarkerIndexes = new List<int>();
 
@@ -65,6 +67,19 @@ namespace VectorGraphicEditor
                         _pointIndex++;
                     }
                 }
+                if (_viewModel.DrawMode == DrawMode.MoveFigure && _currentPolyline != null && _moveFromPoint == default(Point))
+                {
+                    _moveFromPoint = new Point(e.GetPosition(drawTable).X, e.GetPosition(drawTable).Y);
+                    _marker = new Rectangle();
+                    _marker.Stroke = Brushes.Blue;
+                    _marker.Fill = Brushes.Blue;
+                    _marker.Width = 14;
+                    _marker.Height = 14;
+                    Canvas.SetLeft(_marker, _moveFromPoint.X - 7);
+                    Canvas.SetTop(_marker, _moveFromPoint.Y - 7);
+                    _addedMarkerIndexes.Add(drawTable.Children.Add(_marker));
+                    _marker = null;
+                }
             }
             if (e.ChangedButton == MouseButton.Right)
             {
@@ -76,8 +91,50 @@ namespace VectorGraphicEditor
                 {
                     _viewModel.DrawMode = DrawMode.EditFigure;
                 }
+                if (_viewModel.DrawMode == DrawMode.MoveFigure && _currentPolyline != null && _moveToPoint == default(Point))
+                {
+                    _moveToPoint = new Point(e.GetPosition(drawTable).X, e.GetPosition(drawTable).Y);
+                    _marker = new Rectangle();
+                    _marker.Stroke = Brushes.Green;
+                    _marker.Fill = Brushes.Green;
+                    _marker.Width = 14;
+                    _marker.Height = 14;
+                    Canvas.SetLeft(_marker, _moveToPoint.X - 7);
+                    Canvas.SetTop(_marker, _moveToPoint.Y - 7);
+                    _addedMarkerIndexes.Add(drawTable.Children.Add(_marker));
+                    _marker = null;
+                    MoveFigure();
+                }
             }
         }
+
+        private void MoveFigure()
+        {
+            if (_moveToPoint == default(Point) || _moveFromPoint == default(Point) || _currentPolyline == null)
+            {
+                return;
+            }
+            var deltaX = _moveToPoint.X - _moveFromPoint.X;
+            var deltaY = _moveToPoint.Y - _moveFromPoint.Y;
+            List<Point> tmpListPoint = new List<Point>();
+            foreach (Point pt in _currentPolyline.Points)
+            {
+                tmpListPoint.Add(new Point(pt.X + deltaX, pt.Y + deltaY));
+            }
+            _currentPolyline.Points.Clear();
+            foreach (Point pt in tmpListPoint)
+            {
+                _currentPolyline.Points.Add(new Point(pt.X, pt.Y));
+            }
+            tmpListPoint = null;
+            _moveToPoint = default(Point);
+            _moveFromPoint = default(Point);
+            _currentPolyline = null;
+            ClearMarkers();
+            _viewModel.DrawMode = DrawMode.EditFigure;
+            drawTable.InvalidateVisual();
+        }
+
 
         private void btnDelVertex_Click(object sender, RoutedEventArgs e)
         {
@@ -97,6 +154,14 @@ namespace VectorGraphicEditor
             drawTable.InvalidateVisual();
         }
 
+        private void btnMoveLine_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.DrawMode == DrawMode.EditFigure && _currentPolyline != null)
+            {
+                _viewModel.DrawMode = DrawMode.MoveFigure;
+            }
+        }
+
         private void btnDelLine_Click(object sender, RoutedEventArgs e)
         {
             if (_viewModel.DrawMode != DrawMode.EditFigure)
@@ -110,16 +175,16 @@ namespace VectorGraphicEditor
             ClearMarkers();
             drawTable.Children.Remove(_currentPolyline);
             _currentPolyline = null;
-            _pointIndex = null;      
+            _pointIndex = null;
             _marker = null;
             drawTable.InvalidateVisual();
         }
-        
+
         private void drawTable_MouseMove(object sender, MouseEventArgs e)
         {
             if ((_viewModel.DrawMode == DrawMode.AddNewFigure || _viewModel.DrawMode == DrawMode.MoveVertex)
-                && _currentPoint != null 
-                && _currentPolyline != null 
+                && _currentPoint != null
+                && _currentPolyline != null
                 && _currentPolyline.Points.Count > 1)
             {
                 _currentPolyline.Points.RemoveAt(_pointIndex.Value);
@@ -138,6 +203,8 @@ namespace VectorGraphicEditor
         private void BtnSelect_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.EditLineIsChecked = true;
+            _marker = null;
+            _currentPolyline = null;
         }
 
         private void Polyline_MouseDown(object sender, MouseEventArgs e)

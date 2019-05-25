@@ -17,6 +17,10 @@
         /// <summary>
         /// Редактирование вершин
         /// </summary>
-        MoveVertex
+        MoveVertex,
+        /// <summary>
+        /// Двигать фигуру
+        /// </summary>
+        MoveFigure
     }
 }

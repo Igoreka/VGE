@@ -127,9 +127,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Rastr\brokenline.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Rastr\changecolor.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -152,6 +149,12 @@
     <Resource Include="Rastr\vertexdelete.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Rastr\brokenline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Rastr\moveico.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
