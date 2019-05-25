@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -46,6 +47,7 @@ namespace VectorGraphicEditor
                 StrokeThickness = (double)_viewModel.CurrentThikness
             };
             _currentPolyline.MouseDown += Polyline_MouseDown;
+            _currentPolyline.MouseLeftButtonDown += Polyline_MouseLeftButtonDown;
             _pointIndex = null;
             drawTable.Children.Add(_currentPolyline);
         }
@@ -213,14 +215,44 @@ namespace VectorGraphicEditor
             {
                 return;
             }
-
-            if (_currentPolyline != (Polyline)sender)
-            {
-                ClearMarkers();
-            }
+            ClearMarkers();
             _currentPolyline = (Polyline)sender;
             DrawMarkres(_currentPolyline);
         }
+
+        private void Polyline_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_viewModel.DrawMode == DrawMode.AddNewFigure)
+            {
+                return;
+            }
+            if (e.ClickCount != 2)
+            {
+                return;
+            }
+            ClearMarkers();
+            Point PointToInsert = e.GetPosition((Polyline)sender);
+            Point startp;
+            Point stopp;
+            int indexofpoint = 0;
+            List<Tuple<int, int>> testIndexes = new List<Tuple<int, int>>();
+            for (int i = 1; i < _currentPolyline.Points.Count; i++)
+            {
+                startp = _currentPolyline.Points[i - 1];
+                stopp = _currentPolyline.Points[i];
+                double l1 = Math.Sqrt((PointToInsert.X - startp.X) * (PointToInsert.X - startp.X) + (PointToInsert.Y - startp.Y) * (PointToInsert.Y - startp.Y));
+                double l2 = Math.Sqrt((stopp.X - PointToInsert.X) * (stopp.X - PointToInsert.X) + (stopp.Y - PointToInsert.Y) * (stopp.Y - PointToInsert.Y));
+                double l3 = Math.Sqrt((stopp.X - startp.X) * (stopp.X - startp.X) + (stopp.Y - startp.Y) * (stopp.Y - startp.Y));
+
+                if (Math.Round(l1 + l2) == Math.Round(l3))
+                {
+                    indexofpoint = i;
+                }
+            }
+            _currentPolyline.Points.Insert(indexofpoint, PointToInsert);
+            DrawMarkres(_currentPolyline);
+        }
+
 
         private void DrawMarkres(Polyline polyline)
         {
