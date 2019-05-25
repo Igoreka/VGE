@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using VectorGraphicEditor.Model;
@@ -235,7 +237,7 @@ namespace VectorGraphicEditor
             Point startp;
             Point stopp;
             int indexofpoint = 0;
-             for (int i = 1; i < _currentPolyline.Points.Count; i++)
+            for (int i = 1; i < _currentPolyline.Points.Count; i++)
             {
                 startp = _currentPolyline.Points[i - 1];
                 stopp = _currentPolyline.Points[i];
@@ -312,6 +314,24 @@ namespace VectorGraphicEditor
                     drawTable.Children.RemoveAt(idx);
                 }
                 _addedMarkerIndexes.Clear();
+            }
+        }
+
+        private void BtnSaveToFile_Click(object sender, RoutedEventArgs e)
+        {
+            FileStream fs = File.Open("d:\\temp\\xamlFileName.xaml", FileMode.Create);
+            XamlWriter.Save(drawTable, fs);
+            fs.Close();
+        }
+
+        private void BtnLoadFromFile_Click(object sender, RoutedEventArgs e)
+        {
+            FileStream fs = File.Open("d:\\temp\\xamlFileName.xaml", FileMode.Open, FileAccess.Read);
+            Canvas FromFile = XamlReader.Load(fs) as Canvas;
+
+            foreach (Polyline pl in FromFile.Children)
+            {
+                drawTable.Children.Add(pl);
             }
         }
     }

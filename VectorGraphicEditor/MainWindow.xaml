@@ -53,12 +53,12 @@
                       IsSynchronizedWithCurrentItem="True">
             </ComboBox>
             <xctk:ColorPicker ToolTip="Изменить цвет" x:Name="_colorPicker" SelectedColor="{Binding CurrentPickColor, Mode=TwoWay}" VerticalAlignment="Top" Margin="10 10 10 10"/>
-            <Button x:Name="btnSaveToFile"  ToolTip="Сохранить в файл" Height="40" Width="40" Margin="10 10 10 10">
+            <Button x:Name="btnSaveToFile"  ToolTip="Сохранить в файл" Height="40" Width="40" Margin="10 10 10 10" Click="BtnSaveToFile_Click">
                 <DockPanel>
                     <Image Source=".\Rastr\savetofile.png"/>
                 </DockPanel>
             </Button>
-            <Button x:Name="btnLoadFromFile"  ToolTip="Загрузить из файла" Height="40" Width="40" Margin="10 10 10 10">
+            <Button x:Name="btnLoadFromFile"  ToolTip="Загрузить из файла" Height="40" Width="40" Margin="10 10 10 10" Click="BtnLoadFromFile_Click">
                 <DockPanel>
                     <Image Source=".\Rastr\loadfromfile.png"/>
                 </DockPanel>
