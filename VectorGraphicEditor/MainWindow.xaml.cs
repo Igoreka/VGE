@@ -235,8 +235,7 @@ namespace VectorGraphicEditor
             Point startp;
             Point stopp;
             int indexofpoint = 0;
-            List<Tuple<int, int>> testIndexes = new List<Tuple<int, int>>();
-            for (int i = 1; i < _currentPolyline.Points.Count; i++)
+             for (int i = 1; i < _currentPolyline.Points.Count; i++)
             {
                 startp = _currentPolyline.Points[i - 1];
                 stopp = _currentPolyline.Points[i];
