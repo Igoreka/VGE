@@ -37,8 +37,21 @@ namespace VectorGraphicEditor
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.AddNewLineIsChecked = true;
-            ClearMarkers();
+            ResetAllSelected();
             AddNewLine();
+        }
+
+        private void ResetAllSelected()
+        {
+            ClearMarkers();
+            _currentPolyline = null;
+            _currentPoint = default(Point);
+            _pointIndex = null;
+            _viewModel.DrawMode = DrawMode.None;
+            _marker = null;
+            _viewModel.AddNewLineIsChecked = false;
+            _viewModel.EditLineIsChecked = false;
+            drawTable.InvalidateVisual();
         }
 
         private void AddNewLine()
@@ -213,7 +226,7 @@ namespace VectorGraphicEditor
 
         private void Polyline_MouseDown(object sender, MouseEventArgs e)
         {
-            if (_viewModel.DrawMode == DrawMode.AddNewFigure)
+            if (_viewModel.DrawMode == DrawMode.AddNewFigure || _viewModel.DrawMode == DrawMode.None)
             {
                 return;
             }
@@ -319,20 +332,46 @@ namespace VectorGraphicEditor
 
         private void BtnSaveToFile_Click(object sender, RoutedEventArgs e)
         {
+            ResetAllSelected();
             FileStream fs = File.Open("d:\\temp\\xamlFileName.xaml", FileMode.Create);
             XamlWriter.Save(drawTable, fs);
             fs.Close();
+            fs.Dispose();
         }
 
         private void BtnLoadFromFile_Click(object sender, RoutedEventArgs e)
         {
             FileStream fs = File.Open("d:\\temp\\xamlFileName.xaml", FileMode.Open, FileAccess.Read);
             Canvas FromFile = XamlReader.Load(fs) as Canvas;
-
             foreach (Polyline pl in FromFile.Children)
             {
-                drawTable.Children.Add(pl);
+                _viewModel.CurrentPickColor = ((SolidColorBrush)(pl.Stroke)).Color;
+                if (0 <= pl.StrokeThickness && pl.StrokeThickness <= 1)
+                {
+                    _viewModel.CurrentThikness = Thikness.Thin;
+                }
+                else if (1 < pl.StrokeThickness && pl.StrokeThickness <= 2)
+                {
+                    _viewModel.CurrentThikness = Thikness.Double;
+                }
+                else if (2 < pl.StrokeThickness && pl.StrokeThickness <= 3)
+                {
+                    _viewModel.CurrentThikness = Thikness.Triple;
+                }
+                else
+                {
+                    _viewModel.CurrentThikness = Thikness.Fourth;
+                }
+                AddNewLine();
+                foreach (Point pt in pl.Points)
+                {
+                    _currentPolyline.Points.Add(pt);
+                }
             }
+            drawTable.InvalidateVisual();
+            FromFile = null;
+            fs.Dispose();
+            ResetAllSelected();
         }
     }
 }
