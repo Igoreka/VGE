@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using VectorGraphicEditor.Model;
 
 
@@ -54,6 +52,8 @@ namespace VectorGraphicEditor.ViewModel
             }
         }
         #endregion
+
+        public String CurrentFileName { get; set; }
 
         public SolidColorBrush ButtonColorAdd => _buttonColorAdd;
 

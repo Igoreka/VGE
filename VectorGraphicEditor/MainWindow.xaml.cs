@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
@@ -36,8 +37,9 @@ namespace VectorGraphicEditor
 
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.AddNewLineIsChecked = true;
             ResetAllSelected();
+            _viewModel.AddNewLineIsChecked = true;
+            _viewModel.DrawMode = DrawMode.AddNewFigure;
             AddNewLine();
         }
 
@@ -332,46 +334,63 @@ namespace VectorGraphicEditor
 
         private void BtnSaveToFile_Click(object sender, RoutedEventArgs e)
         {
-            ResetAllSelected();
-            FileStream fs = File.Open("d:\\temp\\xamlFileName.xaml", FileMode.Create);
-            XamlWriter.Save(drawTable, fs);
-            fs.Close();
-            fs.Dispose();
+            SaveFileDialog myDialog = new SaveFileDialog();
+            myDialog.Filter = "Векторные рисунки(*.XAML)|*.XAML" + "|Все файлы (*.*)|*.* ";
+            myDialog.AddExtension = true;
+            myDialog.OverwritePrompt = true;
+            if (myDialog.ShowDialog() == true)
+            {
+                _viewModel.CurrentFileName = myDialog.FileName;
+                ResetAllSelected();
+                FileStream fs = File.Open(_viewModel.CurrentFileName, FileMode.Create);
+                XamlWriter.Save(drawTable, fs);
+                fs.Close();
+                fs.Dispose();
+            }
         }
 
         private void BtnLoadFromFile_Click(object sender, RoutedEventArgs e)
         {
-            FileStream fs = File.Open("d:\\temp\\xamlFileName.xaml", FileMode.Open, FileAccess.Read);
-            Canvas FromFile = XamlReader.Load(fs) as Canvas;
-            foreach (Polyline pl in FromFile.Children)
+            OpenFileDialog myDialog = new OpenFileDialog();
+            myDialog.Filter = "Векторные рисунки(*.XAML)|*.XAML" + "|Все файлы (*.*)|*.* ";
+            myDialog.CheckFileExists = true;
+            myDialog.Multiselect = true;
+            if (myDialog.ShowDialog() == true)
             {
-                _viewModel.CurrentPickColor = ((SolidColorBrush)(pl.Stroke)).Color;
-                if (0 <= pl.StrokeThickness && pl.StrokeThickness <= 1)
+                _viewModel.CurrentFileName = myDialog.FileName;
+
+                FileStream fs = File.Open(_viewModel.CurrentFileName, FileMode.Open, FileAccess.Read);
+                Canvas FromFile = XamlReader.Load(fs) as Canvas;
+                foreach (Polyline pl in FromFile.Children)
                 {
-                    _viewModel.CurrentThikness = Thikness.Thin;
+                    _viewModel.CurrentPickColor = ((SolidColorBrush)(pl.Stroke)).Color;
+                    if (0 <= pl.StrokeThickness && pl.StrokeThickness <= 1)
+                    {
+                        _viewModel.CurrentThikness = Thikness.Thin;
+                    }
+                    else if (1 < pl.StrokeThickness && pl.StrokeThickness <= 2)
+                    {
+                        _viewModel.CurrentThikness = Thikness.Double;
+                    }
+                    else if (2 < pl.StrokeThickness && pl.StrokeThickness <= 3)
+                    {
+                        _viewModel.CurrentThikness = Thikness.Triple;
+                    }
+                    else
+                    {
+                        _viewModel.CurrentThikness = Thikness.Fourth;
+                    }
+                    AddNewLine();
+                    foreach (Point pt in pl.Points)
+                    {
+                        _currentPolyline.Points.Add(pt);
+                    }
                 }
-                else if (1 < pl.StrokeThickness && pl.StrokeThickness <= 2)
-                {
-                    _viewModel.CurrentThikness = Thikness.Double;
-                }
-                else if (2 < pl.StrokeThickness && pl.StrokeThickness <= 3)
-                {
-                    _viewModel.CurrentThikness = Thikness.Triple;
-                }
-                else
-                {
-                    _viewModel.CurrentThikness = Thikness.Fourth;
-                }
-                AddNewLine();
-                foreach (Point pt in pl.Points)
-                {
-                    _currentPolyline.Points.Add(pt);
-                }
+                drawTable.InvalidateVisual();
+                FromFile = null;
+                fs.Dispose();
+                ResetAllSelected();
             }
-            drawTable.InvalidateVisual();
-            FromFile = null;
-            fs.Dispose();
-            ResetAllSelected();
         }
     }
 }
