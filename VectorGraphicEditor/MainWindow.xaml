@@ -64,6 +64,7 @@
                 </DockPanel>
             </Button>
         </StackPanel>
-        <Canvas Grid.Column="1" Background="Transparent" x:Name="drawTable" Height="570" Width="890" MouseDown="drawTable_MouseDown" MouseMove="drawTable_MouseMove"/>
+        <Border BorderBrush="Black" Background="Transparent" BorderThickness="2" HorizontalAlignment="Left" Height="559" Margin="5,0,0,0" VerticalAlignment="Top" Width="881" Grid.Column="1"/>
+        <Canvas Grid.Column="1" Background="Transparent" x:Name="drawTable" Width="890" MouseDown="drawTable_MouseDown" MouseMove="drawTable_MouseMove" Margin="3,0"/>
     </Grid>
 </Window>
