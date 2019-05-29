@@ -31,7 +31,7 @@
                     <Image Source=".\Rastr\brokenline.png"/>
                 </DockPanel>
             </Button>
-            <Button Background="{Binding ButtonColorEdit}" x:Name="btnMoveLine" Click="btnMoveLine_Click" ToolTip="Перемещение ломанной линии" Height="50" Width="50" Margin="5 5 5 5">
+            <Button Background="{Binding ButtonColorMove}" x:Name="btnMoveLine" Click="btnMoveLine_Click" ToolTip="Перемещение ломанной линии" Height="50" Width="50" Margin="5 5 5 5">
                 <DockPanel Width="35" Height="35" >
                     <Image Source=".\Rastr\moveico.png"/>
                 </DockPanel>
@@ -65,6 +65,6 @@
             </Button>
         </StackPanel>
         <Border BorderBrush="Black" Background="Transparent" BorderThickness="2" HorizontalAlignment="Left" Height="559" Margin="5,0,0,0" VerticalAlignment="Top" Width="881" Grid.Column="1"/>
-        <Canvas Grid.Column="1" Background="Transparent" x:Name="drawTable" Width="890" MouseDown="drawTable_MouseDown" MouseMove="drawTable_MouseMove" Margin="3,0"/>
+        <Canvas Grid.Column="1" Background="Transparent" x:Name="DrawTable" Width="890" MouseDown="DrawTable_MouseDown" MouseMove="DrawTable_MouseMove" Margin="3,0"/>
     </Grid>
 </Window>

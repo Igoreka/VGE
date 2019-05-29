@@ -16,6 +16,7 @@ namespace VectorGraphicEditor.ViewModel
         private bool _editLineIsChecked;
         private SolidColorBrush _buttonColorAdd = Brushes.DarkGray;
         private SolidColorBrush _buttonColorEdit = Brushes.DarkGray;
+        private SolidColorBrush _buttonColorMove = Brushes.DarkGray;
         private Color _currentPickColor;
         
         #region Цвет
@@ -58,6 +59,8 @@ namespace VectorGraphicEditor.ViewModel
         public SolidColorBrush ButtonColorAdd => _buttonColorAdd;
 
         public SolidColorBrush ButtonColorEdit => _buttonColorEdit;
+
+        public SolidColorBrush ButtonColorMove => _buttonColorMove;
 
         public bool AddNewLineIsChecked
         {
@@ -116,7 +119,20 @@ namespace VectorGraphicEditor.ViewModel
         public DrawMode DrawMode
         {
             get { return _drawMode; }
-            set { _drawMode = value; NotifyPropertyChanged(nameof(DrawMode)); }
+            set
+            {
+                _drawMode = value;
+                NotifyPropertyChanged(nameof(DrawMode));
+                if (_drawMode == DrawMode.MoveFigure)
+                {
+                    _buttonColorMove = Brushes.Green;
+                }
+                else
+                {
+                    _buttonColorMove = Brushes.DarkGray;
+                }
+                NotifyPropertyChanged(nameof(ButtonColorMove));
+            }
         }
 
         public Thikness CurrentThikness
