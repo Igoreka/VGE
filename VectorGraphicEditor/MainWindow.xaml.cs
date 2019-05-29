@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -46,6 +47,14 @@ namespace VectorGraphicEditor
         /// Коллекция маркеров, выделяющих вершины ломаной линии
         /// </summary>
         private List<int> _addedMarkerIndexes = new List<int>();
+        /// <summary>
+        /// Толщина линии, привязка к источнику
+        /// </summary>
+        private Binding _bindThikness;
+        /// <summary>
+        /// Цвет линии, привязка к источнику
+        /// </summary>
+        private Binding _bindColor;
 
         private DrawViewModel _viewModel;
 
@@ -69,12 +78,33 @@ namespace VectorGraphicEditor
             AddNewLine();
         }
 
+        private void ClearPolylineBindings(Polyline pl)
+        {
+            if (pl == null)
+            {
+                return;
+            }
+            //Удаляем привязки
+            //И проставляем цвет текущий
+            if (_bindColor != null)
+            {
+                BindingOperations.ClearBinding(pl, Polyline.StrokeProperty);
+            }
+            if (_bindThikness != null)
+            {
+                BindingOperations.ClearBinding(pl, Polyline.StrokeThicknessProperty);
+            }
+            pl.Stroke = _viewModel.CurrentColor;
+            pl.StrokeThickness = _viewModel.CurrentThiknessDouble;
+        }
+
         /// <summary>
         /// Сброс всех переменных, используемых для выделения линии
         /// </summary>
         private void ResetAllSelected()
         {
             ClearMarkers();
+            ClearPolylineBindings(_currentPolyline);
             _currentPolyline = null;
             _currentPoint = default(Point);
             _pointIndex = null;
@@ -93,7 +123,7 @@ namespace VectorGraphicEditor
             _currentPolyline = new Polyline
             {
                 Stroke = _viewModel.CurrentColor,
-                StrokeThickness = (double)_viewModel.CurrentThikness
+                StrokeThickness = _viewModel.CurrentThiknessDouble
             };
             _currentPolyline.MouseDown += Polyline_MouseDown;
             _currentPolyline.MouseLeftButtonDown += Polyline_MouseLeftButtonDown;
@@ -188,6 +218,11 @@ namespace VectorGraphicEditor
         }
 
 
+        /// <summary>
+        /// Обработчик кнопки удаления вершины ломаной линии
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDelVertex_Click(object sender, RoutedEventArgs e)
         {
             //Удаление вершин ломаной линии
@@ -289,8 +324,20 @@ namespace VectorGraphicEditor
                 return;
             }
             ClearMarkers();
+            ClearPolylineBindings(_currentPolyline);
             _currentPolyline = (Polyline)sender;
             DrawMarkres(_currentPolyline);
+            //Делаем привязку свойст толщины и цвета к источникам изменения
+            _bindThikness = new Binding();
+            _bindColor = new Binding();
+            _bindThikness.Path = new PropertyPath("CurrentThiknessDouble");
+            _bindColor.Path = new PropertyPath("CurrentColor");
+            _bindThikness.Mode = BindingMode.OneWay;
+            _bindColor.Mode = BindingMode.OneWay;
+            _viewModel.CurrentPickColor = ((SolidColorBrush)(_currentPolyline.Stroke)).Color;
+            _viewModel.CurrentThikness =  DoubleToThikness(_currentPolyline.StrokeThickness);
+            _currentPolyline.SetBinding(Polyline.StrokeThicknessProperty, _bindThikness);
+            _currentPolyline.SetBinding(Polyline.StrokeProperty, _bindColor);
         }
 
         /// <summary>
@@ -300,14 +347,14 @@ namespace VectorGraphicEditor
         /// <param name="e"></param>
         private void Polyline_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (_viewModel.DrawMode == DrawMode.AddNewFigure)
+            if (_viewModel.DrawMode == DrawMode.AddNewFigure
+                || e.ClickCount != 2
+                || _currentPolyline == null
+                )
             {
                 return;
             }
-            if (e.ClickCount != 2)
-            {
-                return;
-            }
+
             ClearMarkers();
             Point PointToInsert = e.GetPosition((Polyline)sender);
             Point startp;
@@ -330,7 +377,10 @@ namespace VectorGraphicEditor
             DrawMarkres(_currentPolyline);
         }
 
-
+        /// <summary>
+        /// Отрисовка маркеров вершин линии
+        /// </summary>
+        /// <param name="polyline"></param>
         private void DrawMarkres(Polyline polyline)
         {
             Point ptLeftTop = new Point();
@@ -379,6 +429,11 @@ namespace VectorGraphicEditor
             _marker = null;
         }
 
+        /// <summary>
+        /// Обработка нажатия кнопки на вершине
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Marker_MouseDown(object sender, MouseEventArgs e)
         {
             if (_viewModel.DrawMode != DrawMode.MoveVertex)
@@ -396,6 +451,9 @@ namespace VectorGraphicEditor
             FindVertexIndex();
         }
 
+        /// <summary>
+        /// Поиск вершины, которая соответствует выбранному маркеру
+        /// </summary>
         private void FindVertexIndex()
         {
             _pointIndex = 0;
@@ -411,6 +469,9 @@ namespace VectorGraphicEditor
             }
         }
 
+        /// <summary>
+        /// Очистка всех маркеров с канвы
+        /// </summary>
         private void ClearMarkers()
         {
             if (_addedMarkerIndexes.Count != 0)
@@ -441,6 +502,31 @@ namespace VectorGraphicEditor
             }
         }
 
+        /// <summary>
+        /// Преобразуем толщину линии к enum
+        /// </summary>
+        /// <param name="lineThik"></param>
+        /// <returns></returns>
+        private Thikness DoubleToThikness(double lineThik)
+        {
+            if (0 <= lineThik && lineThik <= 1)
+            {
+                return Thikness.Thin;
+            }
+            else if (1 < lineThik && lineThik <= 2)
+            {
+                return Thikness.Double;
+            }
+            else if (2 < lineThik && lineThik <= 3)
+            {
+                return Thikness.Triple;
+            }
+            else
+            {
+                return Thikness.Fourth;
+            }
+        }
+
         private void BtnLoadFromFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog myDialog = new OpenFileDialog();
@@ -449,6 +535,7 @@ namespace VectorGraphicEditor
             myDialog.Multiselect = true;
             if (myDialog.ShowDialog() == true)
             {
+                DrawTable.Children.Clear();
                 _viewModel.CurrentFileName = myDialog.FileName;
 
                 FileStream fs = File.Open(_viewModel.CurrentFileName, FileMode.Open, FileAccess.Read);
@@ -456,22 +543,8 @@ namespace VectorGraphicEditor
                 foreach (Polyline pl in FromFile.Children)
                 {
                     _viewModel.CurrentPickColor = ((SolidColorBrush)(pl.Stroke)).Color;
-                    if (0 <= pl.StrokeThickness && pl.StrokeThickness <= 1)
-                    {
-                        _viewModel.CurrentThikness = Thikness.Thin;
-                    }
-                    else if (1 < pl.StrokeThickness && pl.StrokeThickness <= 2)
-                    {
-                        _viewModel.CurrentThikness = Thikness.Double;
-                    }
-                    else if (2 < pl.StrokeThickness && pl.StrokeThickness <= 3)
-                    {
-                        _viewModel.CurrentThikness = Thikness.Triple;
-                    }
-                    else
-                    {
-                        _viewModel.CurrentThikness = Thikness.Fourth;
-                    }
+                    _viewModel.CurrentThikness =  DoubleToThikness(pl.StrokeThickness);
+                    
                     AddNewLine();
                     foreach (Point pt in pl.Points)
                     {

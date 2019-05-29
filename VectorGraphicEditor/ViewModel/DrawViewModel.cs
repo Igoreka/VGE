@@ -14,11 +14,8 @@ namespace VectorGraphicEditor.ViewModel
         private DrawMode _drawMode;
         private bool _addNewLineIsChecked;
         private bool _editLineIsChecked;
-        private SolidColorBrush _buttonColorAdd = Brushes.DarkGray;
-        private SolidColorBrush _buttonColorEdit = Brushes.DarkGray;
-        private SolidColorBrush _buttonColorMove = Brushes.DarkGray;
         private Color _currentPickColor;
-        
+
         #region Цвет
         public Color CurrentPickColor
         {
@@ -49,18 +46,18 @@ namespace VectorGraphicEditor.ViewModel
             LineThiknees = new Dictionary<Thikness, string>();
             foreach (Thikness val in Enum.GetValues(typeof(Thikness)))
             {
-                LineThiknees.Add(val,EnumConverter.GetDescription(val));
+                LineThiknees.Add(val, EnumConverter.GetDescription(val));
             }
         }
         #endregion
 
         public String CurrentFileName { get; set; }
 
-        public SolidColorBrush ButtonColorAdd => _buttonColorAdd;
+        public SolidColorBrush ButtonColorAdd { get; private set; } = Brushes.DarkGray;
 
-        public SolidColorBrush ButtonColorEdit => _buttonColorEdit;
+        public SolidColorBrush ButtonColorEdit { get; private set; } = Brushes.DarkGray;
 
-        public SolidColorBrush ButtonColorMove => _buttonColorMove;
+        public SolidColorBrush ButtonColorMove { get; private set; } = Brushes.DarkGray;
 
         public bool AddNewLineIsChecked
         {
@@ -73,13 +70,13 @@ namespace VectorGraphicEditor.ViewModel
                 {
                     EditLineIsChecked = !_addNewLineIsChecked;
                     _drawMode = DrawMode.AddNewFigure;
-                     _buttonColorAdd = Brushes.Green;
+                    ButtonColorAdd = Brushes.Green;
                     NotifyPropertyChanged(nameof(ButtonColorAdd));
                 }
                 else
                 {
                     _drawMode = DrawMode.None;
-                    _buttonColorAdd = Brushes.DarkGray;
+                    ButtonColorAdd = Brushes.DarkGray;
                     NotifyPropertyChanged(nameof(ButtonColorAdd));
                 }
             }
@@ -95,13 +92,13 @@ namespace VectorGraphicEditor.ViewModel
                 {
                     AddNewLineIsChecked = !_editLineIsChecked;
                     _drawMode = DrawMode.EditFigure;
-                    _buttonColorEdit = Brushes.Green;
+                    ButtonColorEdit = Brushes.Green;
                     NotifyPropertyChanged(nameof(ButtonColorEdit));
                 }
                 else
                 {
                     _drawMode = DrawMode.None;
-                    _buttonColorEdit = Brushes.DarkGray;
+                    ButtonColorEdit = Brushes.DarkGray;
                     NotifyPropertyChanged(nameof(ButtonColorEdit));
                 }
             }
@@ -125,11 +122,11 @@ namespace VectorGraphicEditor.ViewModel
                 NotifyPropertyChanged(nameof(DrawMode));
                 if (_drawMode == DrawMode.MoveFigure)
                 {
-                    _buttonColorMove = Brushes.Green;
+                    ButtonColorMove = Brushes.Green;
                 }
                 else
                 {
-                    _buttonColorMove = Brushes.DarkGray;
+                    ButtonColorMove = Brushes.DarkGray;
                 }
                 NotifyPropertyChanged(nameof(ButtonColorMove));
             }
@@ -145,8 +142,11 @@ namespace VectorGraphicEditor.ViewModel
             {
                 _currentThikness = value;
                 NotifyPropertyChanged(nameof(CurrentThikness));
+                NotifyPropertyChanged(nameof(CurrentThiknessDouble));
             }
         }
+
+        public double CurrentThiknessDouble => (double)_currentThikness;
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void NotifyPropertyChanged(params string[] propertyNames)
@@ -158,6 +158,6 @@ namespace VectorGraphicEditor.ViewModel
             }
         }
 
-       
+
     }
 }
