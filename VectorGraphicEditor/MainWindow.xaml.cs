@@ -72,6 +72,10 @@ namespace VectorGraphicEditor
         /// <param name="e"></param>
         private void btnAddLine_Click(object sender, RoutedEventArgs e)
         {
+            if (_currentPolyline != null && _currentPolyline.Points.Count < 2)
+            {
+                DrawTable.Children.Remove(_currentPolyline);
+            }
             ResetAllSelected();
             _viewModel.AddNewLineIsChecked = true;
             _viewModel.DrawMode = DrawMode.AddNewFigure;
@@ -142,7 +146,7 @@ namespace VectorGraphicEditor
             {
                 if (_viewModel.DrawMode == DrawMode.AddNewFigure)
                 {
-                   // Добавление новой вершины в ломаной линии
+                    // Добавление новой вершины в ломаной линии
                     _currentPoint = new Point(e.GetPosition(DrawTable).X, e.GetPosition(DrawTable).Y);
                     _currentPolyline.Points.Add(_currentPoint);
                     if (_pointIndex == null) { _pointIndex = 0; }
@@ -178,12 +182,18 @@ namespace VectorGraphicEditor
                 {
                     //Снимаем выделение цветом с кнопки добавления новой линии
                     _viewModel.AddNewLineIsChecked = false;
+                    //Если у Линии одна точка и меньше - то удаляем ее с канвы
+                    if (_currentPolyline.Points.Count < 2)
+                    {
+                        DrawTable.Children.Remove(_currentPolyline);
+                    }
+                    ResetAllSelected();
                 }
                 if (_viewModel.DrawMode == DrawMode.MoveVertex)
                 {
                     //Переходим из режима редактирования вершин к режиму редактиования линии
                     _viewModel.DrawMode = DrawMode.EditFigure;
-                }                
+                }
             }
         }
 
@@ -211,6 +221,7 @@ namespace VectorGraphicEditor
             tmpListPoint = null;
             _moveToPoint = default(Point);
             _moveFromPoint = default(Point);
+            ClearPolylineBindings(_currentPolyline);
             _currentPolyline = null;
             ClearMarkers();
             _viewModel.DrawMode = DrawMode.EditFigure;
@@ -306,6 +317,10 @@ namespace VectorGraphicEditor
         /// <param name="e"></param>
         private void BtnSelect_Click(object sender, RoutedEventArgs e)
         {
+            if (_currentPolyline != null && _currentPolyline.Points.Count < 2)
+            {
+                DrawTable.Children.Remove(_currentPolyline);
+            }
             _viewModel.EditLineIsChecked = true;
             _marker = null;
             _currentPolyline = null;
@@ -335,7 +350,7 @@ namespace VectorGraphicEditor
             _bindThikness.Mode = BindingMode.OneWay;
             _bindColor.Mode = BindingMode.OneWay;
             _viewModel.CurrentPickColor = ((SolidColorBrush)(_currentPolyline.Stroke)).Color;
-            _viewModel.CurrentThikness =  DoubleToThikness(_currentPolyline.StrokeThickness);
+            _viewModel.CurrentThikness = DoubleToThikness(_currentPolyline.StrokeThickness);
             _currentPolyline.SetBinding(Polyline.StrokeThicknessProperty, _bindThikness);
             _currentPolyline.SetBinding(Polyline.StrokeProperty, _bindColor);
         }
@@ -414,7 +429,7 @@ namespace VectorGraphicEditor
                 _addedMarkerIndexes.Add(DrawTable.Children.Add(_marker));
             }
             //Вычисляем точку центра ломаной линии
-            ptCenter.X = (ptLeftTop.X + ptRightDown.X) /2;
+            ptCenter.X = (ptLeftTop.X + ptRightDown.X) / 2;
             ptCenter.Y = (ptLeftTop.Y + ptRightDown.Y) / 2;
             //Устанаваливаем маркер, от которого будем пермещать ломаную линию
             _moveFromPoint = new Point(ptCenter.X, ptCenter.Y);
@@ -495,10 +510,10 @@ namespace VectorGraphicEditor
             {
                 _viewModel.CurrentFileName = myDialog.FileName;
                 ResetAllSelected();
-                FileStream fs = File.Open(_viewModel.CurrentFileName, FileMode.Create);
-                XamlWriter.Save(DrawTable, fs);
-                fs.Close();
-                fs.Dispose();
+                using (FileStream fs = File.Open(_viewModel.CurrentFileName, FileMode.Create))
+                {
+                    XamlWriter.Save(DrawTable, fs);
+                }
             }
         }
 
@@ -509,7 +524,7 @@ namespace VectorGraphicEditor
         /// <returns></returns>
         private Thikness DoubleToThikness(double lineThik)
         {
-            if (0 <= lineThik && lineThik <= 1)
+            if (lineThik <= 1)
             {
                 return Thikness.Thin;
             }
@@ -538,22 +553,30 @@ namespace VectorGraphicEditor
                 DrawTable.Children.Clear();
                 _viewModel.CurrentFileName = myDialog.FileName;
 
-                FileStream fs = File.Open(_viewModel.CurrentFileName, FileMode.Open, FileAccess.Read);
-                Canvas FromFile = XamlReader.Load(fs) as Canvas;
-                foreach (Polyline pl in FromFile.Children)
+                using (FileStream fs = File.Open(_viewModel.CurrentFileName, FileMode.Open, FileAccess.Read))
                 {
-                    _viewModel.CurrentPickColor = ((SolidColorBrush)(pl.Stroke)).Color;
-                    _viewModel.CurrentThikness =  DoubleToThikness(pl.StrokeThickness);
-                    
-                    AddNewLine();
-                    foreach (Point pt in pl.Points)
+                    Canvas FromFile = XamlReader.Load(fs) as Canvas;
+                    foreach (Polyline pl in FromFile.Children)
                     {
-                        _currentPolyline.Points.Add(pt);
+                        if (pl.Points.Count != 0)
+                        {
+                            if (pl.Stroke != null)
+                            {
+                                _viewModel.CurrentPickColor = ((SolidColorBrush)(pl.Stroke)).Color;
+                            }
+
+                            _viewModel.CurrentThikness = DoubleToThikness(pl.StrokeThickness);
+
+
+                            AddNewLine();
+                            foreach (Point pt in pl.Points)
+                            {
+                                _currentPolyline.Points.Add(pt);
+                            }
+                        }
                     }
                 }
                 DrawTable.InvalidateVisual();
-                FromFile = null;
-                fs.Dispose();
                 ResetAllSelected();
             }
         }

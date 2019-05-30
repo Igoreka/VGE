@@ -10,7 +10,6 @@ namespace VectorGraphicEditor.ViewModel
     public class DrawViewModel : INotifyPropertyChanged
     {
         private Thikness _currentThikness;
-        private SolidColorBrush _currentColor;
         private DrawMode _drawMode;
         private bool _addNewLineIsChecked;
         private bool _editLineIsChecked;
@@ -26,7 +25,6 @@ namespace VectorGraphicEditor.ViewModel
             set
             {
                 _currentPickColor = value;
-                _currentColor = new SolidColorBrush(_currentPickColor);
                 NotifyPropertyChanged(nameof(CurrentPickColor));
                 NotifyPropertyChanged(nameof(CurrentColor));
             }
@@ -34,7 +32,7 @@ namespace VectorGraphicEditor.ViewModel
 
         public SolidColorBrush CurrentColor
         {
-            get { return _currentColor; }
+            get { return new SolidColorBrush(_currentPickColor); }
         }
         #endregion
 
@@ -51,7 +49,7 @@ namespace VectorGraphicEditor.ViewModel
         }
         #endregion
 
-        public String CurrentFileName { get; set; }
+        public string CurrentFileName { get; set; }
 
         public SolidColorBrush ButtonColorAdd { get; private set; } = Brushes.DarkGray;
 
@@ -59,6 +57,9 @@ namespace VectorGraphicEditor.ViewModel
 
         public SolidColorBrush ButtonColorMove { get; private set; } = Brushes.DarkGray;
 
+        /// <summary>
+        /// Признак того что режим добавления линии с раскраской кнопок
+        /// </summary>
         public bool AddNewLineIsChecked
         {
             get { return _addNewLineIsChecked; }
@@ -81,6 +82,10 @@ namespace VectorGraphicEditor.ViewModel
                 }
             }
         }
+
+        /// <summary>
+        /// Признак того что режим редактирования линии с раскраской кнопок
+        /// </summary>
         public bool EditLineIsChecked
         {
             get { return _editLineIsChecked; }
@@ -104,6 +109,9 @@ namespace VectorGraphicEditor.ViewModel
             }
         }
 
+        /// <summary>
+        /// Конструктор с установкой значений по-умолчанию
+        /// </summary>
         public DrawViewModel()
         {
             InitCollections();
@@ -111,8 +119,12 @@ namespace VectorGraphicEditor.ViewModel
             _editLineIsChecked = false;
             _drawMode = DrawMode.None;
             _currentThikness = Thikness.Thin;
+            _currentPickColor = (Color)ColorConverter.ConvertFromString("Blue");
         }
 
+        /// <summary>
+        /// Режим работы (Добавление линии, редактирование линии, удаление линии ...)
+        /// </summary>
         public DrawMode DrawMode
         {
             get { return _drawMode; }
@@ -132,6 +144,9 @@ namespace VectorGraphicEditor.ViewModel
             }
         }
 
+        /// <summary>
+        /// Толщина линии
+        /// </summary>
         public Thikness CurrentThikness
         {
             get
